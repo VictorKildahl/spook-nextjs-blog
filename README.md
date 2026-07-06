@@ -116,6 +116,12 @@ If your site has a fixed navbar, add the `blog-root--fixed-nav` class in
 
 Tweak `--blog-nav-offset` in `blog.css` if your header is taller or shorter.
 
+### Sticky table of contents not working?
+
+`position: sticky` breaks when any ancestor uses `overflow-x: hidden` (including
+`overflow-x-hidden` on `<body>`). Use `overflow-x: clip` instead — it still
+prevents horizontal scroll without disabling sticky positioning.
+
 ## How it stays fresh
 
 Each request is cached and revalidated hourly (`revalidate = 3600` in the pages and
