@@ -1,6 +1,6 @@
 /* Self-contained styles for the Spook blog folder. Imported once by
    app/blog/layout.tsx, so copying the folder is all it takes to get a polished,
-   responsive, light/dark blog. Everything is scoped under `.blog-root` and uses
+   responsive, light-themed blog. Everything is scoped under `.blog-root` and uses
    local custom properties, so it won't collide with the rest of your site — and
    you can retheme the whole blog by overriding the variables below. */
 
@@ -8,6 +8,8 @@
   --blog-max: 46rem; /* article measure */
   --blog-wide: 72rem; /* page + list measure */
   --blog-radius: 0.9rem;
+  /* Set on `.blog-root--fixed-nav` when a fixed header sits above the blog. */
+  --blog-nav-offset: 0px;
 
   --blog-bg: #ffffff;
   --blog-fg: #1a1a1a;
@@ -19,18 +21,10 @@
   --blog-accent-fg: #ffffff;
 
   color: var(--blog-fg);
+  color-scheme: light;
   font-family:
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  .blog-root {
-    --blog-bg: #0b0b0c;
-    --blog-fg: #ededed;
-    --blog-muted: #9ca3af;
-    --blog-accent: #ff8a4c;
-  }
 }
 
 .blog-root *,
@@ -254,31 +248,37 @@
 
 .blog-hero {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-width: var(--blog-max);
+  aspect-ratio: 2 / 1;
+  max-height: 26rem;
   object-fit: cover;
   border-radius: calc(var(--blog-radius) + 0.3rem);
   margin-top: 2rem;
   background: var(--blog-surface);
 }
 
-/* Two-column layout: article body + sticky table of contents. Collapses to a
-   single column (with the TOC moving inline, above the body) on narrow screens. */
-.blog-layout {
-  margin-top: 2.5rem;
+/* Two-column article shell: main column (breadcrumbs → body) + sticky TOC.
+   On narrow screens the sidebar hides and the mobile TOC moves inline. */
+.blog-article-layout {
   display: grid;
   gap: 3rem;
   align-items: start;
 }
 
 @media (min-width: 60rem) {
-  .blog-layout {
+  .blog-article-layout {
     grid-template-columns: minmax(0, 1fr) 16rem;
   }
+}
+
+.blog-article-main {
+  min-width: 0;
 }
 
 .blog-body {
   min-width: 0;
   max-width: var(--blog-max);
+  margin-top: 2.5rem;
 }
 
 /* ── Table of contents ────────────────────────────────────────────────────── */
@@ -298,10 +298,16 @@
     display: block;
     order: 2;
     position: sticky;
-    top: 2rem;
-    max-height: calc(100vh - 4rem);
+    top: calc(var(--blog-nav-offset) + 1.5rem);
+    max-height: calc(100vh - var(--blog-nav-offset) - 3rem);
     overflow-y: auto;
   }
+}
+
+/* Add this class to `.blog-root` when a fixed site header overlaps the blog. */
+.blog-root--fixed-nav {
+  --blog-nav-offset: 5.5rem;
+  padding-top: calc(var(--blog-nav-offset) + 1rem);
 }
 
 .blog-toc-title {
@@ -345,32 +351,13 @@
   font-weight: 600;
 }
 
-/* Mobile TOC as a collapsible panel. */
+/* Mobile TOC — always visible above the article body. */
 .blog-toc-mobile {
-  margin-top: 2.5rem;
+  margin-bottom: 2rem;
+  padding: 0.85rem 1.1rem 1.1rem;
   border: 1px solid var(--blog-border);
   border-radius: var(--blog-radius);
   background: var(--blog-surface);
-}
-
-.blog-toc-mobile > summary {
-  cursor: pointer;
-  list-style: none;
-  padding: 0.85rem 1.1rem;
-  font-weight: 650;
-  font-size: 0.95rem;
-}
-
-.blog-toc-mobile > summary::-webkit-details-marker {
-  display: none;
-}
-
-.blog-toc-mobile[open] > summary {
-  border-bottom: 1px solid var(--blog-border);
-}
-
-.blog-toc-mobile .blog-toc {
-  padding: 0.85rem 1.1rem 1.1rem;
 }
 
 @media (min-width: 60rem) {
@@ -585,8 +572,6 @@
   align-items: center;
   gap: 0.5rem;
   margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--blog-border);
 }
 
 .blog-share-label {
@@ -599,17 +584,19 @@
 .blog-share-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.8rem;
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
+  justify-content: center;
+  padding: 0.55rem;
   color: var(--blog-fg);
   text-decoration: none;
   background: none;
   border: 1px solid var(--blog-border);
   border-radius: 0.55rem;
   cursor: pointer;
+}
+
+.blog-share-icon {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .blog-share-btn:hover {
@@ -629,22 +616,6 @@
   margin: 0 0 1.5rem;
   font-size: 1.35rem;
   font-weight: 700;
-}
-
-/* ── Misc links ───────────────────────────────────────────────────────────── */
-
-.blog-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--blog-muted);
-  text-decoration: none;
-}
-
-.blog-back:hover {
-  color: var(--blog-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticle, getArticles, getRelatedArticles } from "../_lib/spook";
 import { readingTimeMinutes, withHeadingIds } from "../_lib/content";
@@ -95,56 +94,56 @@ export default async function BlogArticlePage({
 
   return (
     <main className="blog-page">
-      <Breadcrumbs
-        items={[
-          { name: "Home", href: "/" },
-          { name: "Blog", href: "/blog" },
-          { name: article.title },
-        ]}
-      />
+      <div className="blog-article-layout">
+        <div className="blog-article-main">
+          <Breadcrumbs
+            items={[
+              { name: "Home", href: "/" },
+              { name: "Blog", href: "/blog" },
+              { name: article.title },
+            ]}
+          />
 
-      <header className="blog-article-header">
-        <h1 className="blog-article-title">{article.title}</h1>
-        <div className="blog-article-meta">
-          {article.publishedAt && (
-            <time dateTime={article.publishedAt}>
-              {formatDate(article.publishedAt)}
-            </time>
-          )}
-          {article.author && (
-            <>
+          <header className="blog-article-header">
+            <h1 className="blog-article-title">{article.title}</h1>
+            <div className="blog-article-meta">
+              {article.publishedAt && (
+                <time dateTime={article.publishedAt}>
+                  {formatDate(article.publishedAt)}
+                </time>
+              )}
+              {article.author && (
+                <>
+                  <span className="blog-dot" aria-hidden="true">
+                    ·
+                  </span>
+                  <span>{article.author}</span>
+                </>
+              )}
               <span className="blog-dot" aria-hidden="true">
                 ·
               </span>
-              <span>{article.author}</span>
-            </>
+              <span>{readingTimeLabel(minutes)}</span>
+            </div>
+          </header>
+
+          {article.featuredImageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className="blog-hero"
+              src={article.featuredImageUrl}
+              alt={article.featuredImageAlt ?? article.title}
+            />
           )}
-          <span className="blog-dot" aria-hidden="true">
-            ·
-          </span>
-          <span>{readingTimeLabel(minutes)}</span>
-        </div>
-      </header>
 
-      {article.featuredImageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          className="blog-hero"
-          src={article.featuredImageUrl}
-          alt={article.featuredImageAlt ?? article.title}
-        />
-      )}
+          <div className="blog-body">
+            {/* Collapsible TOC for small screens; hidden ≥60rem. */}
+            <TableOfContents items={toc} mobile />
 
-      <div className="blog-layout">
-        <div className="blog-body">
-          {/* Collapsible TOC for small screens; hidden ≥60rem. */}
-          <TableOfContents items={toc} mobile />
+            <ArticleBody html={html} />
 
-          <ArticleBody html={html} />
-
-          <ShareButtons url={article.url} title={article.title} />
-
-          <Faq items={article.faqs} />
+            <Faq items={article.faqs} />
+          </div>
         </div>
 
         {/* Sticky TOC sidebar for wide screens; hidden below 60rem. */}
@@ -164,11 +163,7 @@ export default async function BlogArticlePage({
         </section>
       )}
 
-      <p style={{ marginTop: "3rem" }}>
-        <Link href="/blog" className="blog-back">
-          ← All posts
-        </Link>
-      </p>
+      <ShareButtons url={article.url} title={article.title} />
 
       {/* Article + FAQ JSON-LD for rich results, pre-built + escaped by Spook. */}
       <div dangerouslySetInnerHTML={{ __html: article.jsonLd }} />

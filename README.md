@@ -31,17 +31,19 @@ git clone https://github.com/VictorKildahl/spook-nextjs-blog.git
 
 - **`/blog`** — a paginated list of your published articles, as responsive cards
 - **`/blog/[slug]`** — a full article page with:
-  - **Auto-generated table of contents** with scroll-spy (sticky on desktop,
-    collapsible on mobile) — headings are anchor-linkable
+  - **Auto-generated table of contents** with scroll-spy — sticky in a sidebar on
+    desktop (beside the title, hero image, and body), always visible on mobile
+    under a **Table of contents** heading; headings are anchor-linkable
   - **FAQ accordion** — accessible, animated, keyboard-friendly
   - **Reading time**, author, and publish date
-  - **Share buttons** (copy link, X, LinkedIn)
+  - **Share buttons** with SVG icons (copy link, X, LinkedIn) at the bottom of
+    the article
   - **Related posts** ("Keep reading")
   - **Breadcrumbs** with `BreadcrumbList` structured data
   - SEO metadata + **Article / FAQ JSON-LD** (built by Spook)
 - **`/blog/sitemap.xml`** — a sitemap of your posts
 - **`/blog/rss.xml`** — an RSS 2.0 feed
-- **Light & dark mode** out of the box, scoped so it won't touch the rest of your site
+- **Light theme** out of the box, scoped so it won't touch the rest of your site
 
 ## Folder layout
 
@@ -60,7 +62,7 @@ app/blog/
 └── _components/
     ├── table-of-contents.tsx   # scroll-spy TOC (client)
     ├── faq.tsx                  # FAQ accordion (client)
-    ├── share-buttons.tsx        # copy / social share (client)
+    ├── share-buttons.tsx        # copy / social share with SVG icons (client)
     ├── article-body.tsx         # renders the article HTML
     ├── post-card.tsx            # a card in the list
     ├── pagination.tsx           # numbered pagination
@@ -102,6 +104,17 @@ and style the `blog-*` class names — or swap `.blog-content` for `prose` if yo
 Featured images come from Spook as absolute URLs and render with a plain `<img>`,
 so there's nothing to configure. To use `next/image` instead, add the image host to
 `images.remotePatterns` in `next.config`.
+
+### Fixed site header
+
+If your site has a fixed navbar, add the `blog-root--fixed-nav` class in
+`layout.tsx` so the sticky table of contents clears it when you scroll:
+
+```tsx
+<div className="blog-root blog-root--fixed-nav">{children}</div>
+```
+
+Tweak `--blog-nav-offset` in `blog.css` if your header is taller or shorter.
 
 ## How it stays fresh
 

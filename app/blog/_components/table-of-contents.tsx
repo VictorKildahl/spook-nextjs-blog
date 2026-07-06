@@ -8,7 +8,7 @@ import type { TocItem } from "../_lib/content";
 // `withHeadingIds` (see _lib/content.ts), so the links here always resolve.
 //
 // Rendered twice by the article page: once as a sticky desktop sidebar, and once
-// (with `mobile`) inside a collapsible <details> for narrow screens. CSS in
+// (with `mobile`) inline above the article body on narrow screens. CSS in
 // blog.css shows the right one per breakpoint.
 export function TableOfContents({
   items,
@@ -57,7 +57,7 @@ export function TableOfContents({
 
   const nav = (
     <nav className="blog-toc" aria-label="Table of contents">
-      {!mobile && <p className="blog-toc-title">On this page</p>}
+      <p className="blog-toc-title">Table of contents</p>
       <ol>
         {items.map((item) => (
           <li key={item.id} data-level={item.level}>
@@ -74,12 +74,7 @@ export function TableOfContents({
   );
 
   if (mobile) {
-    return (
-      <details className="blog-toc-mobile">
-        <summary>On this page</summary>
-        {nav}
-      </details>
-    );
+    return <div className="blog-toc-mobile">{nav}</div>;
   }
 
   return nav;
